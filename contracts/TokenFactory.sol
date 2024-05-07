@@ -152,16 +152,6 @@ contract TokenFactory is Create3, Initializable {
         );
     }
 
-    IAxelarGateway public testMeTwo;
-    bytes32 public minter;
-    address public wazy;
-
-    function testMe() external {
-        testMeTwo = s_gateway;
-        // minter = s_accessControl.MINTER_ROLE();
-        wazy = testMeTwo.governance();
-    }
-
     //deploy native token on eth (bypass semi native)
     function deployHomeNative(
         string calldata _destChain,
@@ -182,13 +172,7 @@ contract TokenFactory is Create3, Initializable {
 
         // Deploy token manager
 
-        bytes32 itsTokenId = s_its.deployTokenManager(
-            S_SALT_ITS_TOKEN,
-            _destChain,
-            ITokenManagerType.TokenManagerType.LOCK_UNLOCK,
-            _itsTokenParams,
-            msg.value
-        );
+        s_its.interchainTokenDeployer();
 
         // Deploy ProxyAdmin
         ProxyAdmin proxyAdmin = new ProxyAdmin(msg.sender);
@@ -197,13 +181,21 @@ contract TokenFactory is Create3, Initializable {
         bytes memory proxyCreationCode = _getEncodedCreationCodeNative(
             address(proxyAdmin),
             newTokenImpl,
-            itsTokenId,
+            // itsTokenId,
+            bytes32("123"),
             _burnRate,
             _txFeeRate
         );
 
-        //Deploy proxy
+        // Deploy proxy
         newTokenProxy = _create3(proxyCreationCode, S_SALT_PROXY);
+        bytes32 itsTokenId = s_its.deployTokenManager(
+            S_SALT_ITS_TOKEN,
+            _destChain,
+            ITokenManagerType.TokenManagerType.LOCK_UNLOCK,
+            _itsTokenParams,
+            msg.value
+        );
         if (newTokenProxy == address(0)) revert DeploymentFailed();
 
         emit NativeTokenDeployed(newTokenProxy);

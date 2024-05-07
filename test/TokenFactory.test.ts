@@ -17,6 +17,9 @@ describe("TokenFactory", () => {
     let polygonUserWallet: Wallet;
     let avalancheUserWallet: Wallet;
 
+    const burnRate = 10000
+    const txFeeRate = 20000
+
 
     before(async () => {
         // Initialize a Polygon network
@@ -58,11 +61,15 @@ describe("TokenFactory", () => {
             expect(accessControlProxy.target).to.equal(await factoryProxy.s_accessControl())
         })
     })
-    describe("Deployment and Initialization", () => {
+    describe("deployHomeNative", () => {
         it("Should set the right deployer", async function () {
-            console.log(await factoryProxy.s_gateway(), 'gateway from storage')
-            await factoryProxy.testMe()
-            console.log(await factoryProxy.wazy(), 'the waz')
+            const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
+            await factoryProxy.deployHomeNative("", itsDeploymentParams, burnRate, txFeeRate)
+            // const testComputed = factoryProxy.testComputedAddr();
+            // const testActualAddr = factoryProxy.testActualAddr();
+            // console.log(testComputed.toString(), 'compouted')
+            // console.log(testActualAddr.toString(), 'actual addr')
+
         });
 
     });
