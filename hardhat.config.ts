@@ -2,6 +2,17 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades"
 import "hardhat-contract-sizer";
+import fs from 'fs-extra'; // Imported directly with TypeScript support
+
+// Task to clean up the .openzeppelin directory
+task("cleanOpenZeppelin", "Removes the .openzeppelin directory", async (_, hre, runSuper) => {
+  const directory = './.openzeppelin';
+  if (fs.existsSync(directory)) {
+    await fs.remove(directory);
+    console.log('.openzeppelin directory removed successfully.');
+  }
+});
+
 
 
 const config: HardhatUserConfig = {

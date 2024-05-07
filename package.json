@@ -4,6 +4,9 @@
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.3"
   },
+  "scripts": {
+    "test": "hardhat cleanOpenZeppelin && hardhat test --network polygon"
+  },
   "dependencies": {
     "@axelar-network/axelar-gmp-sdk-solidity": "^5.8.0",
     "@axelar-network/axelar-local-dev": "^2.3.2",
@@ -12,6 +15,8 @@
     "@openzeppelin/contracts-upgradeable": "^5.0.2",
     "@openzeppelin/hardhat-upgrades": "^3.1.0",
     "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^11.2.0",
     "hardhat-contract-sizer": "^2.10.0"
   }
 }

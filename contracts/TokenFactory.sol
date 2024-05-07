@@ -34,7 +34,7 @@ contract TokenFactory is Create3, Initializable {
     /*************/
     IInterchainTokenService public s_its;
     AccessControl public s_accessControl;
-    IAxelarGasService private s_gasService;
+    IAxelarGasService public s_gasService;
     IAxelarGateway public s_gateway;
     Deployer public s_deployer;
     bytes32 public S_SALT_PROXY; //123
@@ -84,17 +84,14 @@ contract TokenFactory is Create3, Initializable {
 
     function initialize(
         IInterchainTokenService _its,
-        address _gasService,
-        IAxelarGateway _gateway
-    )
-        external
-        // AccessControl _accessControl
-        initializer
-    {
-        s_its = IInterchainTokenService(_its);
-        s_gasService = IAxelarGasService(_gasService);
-        s_gateway = IAxelarGateway(_gateway);
-        s_accessControl = AccessControl(address(0));
+        IAxelarGasService _gasService,
+        IAxelarGateway _gateway,
+        AccessControl _accessControl
+    ) external initializer {
+        s_its = _its;
+        s_gasService = _gasService;
+        s_gateway = _gateway;
+        s_accessControl = _accessControl;
 
         S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
         S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
@@ -157,11 +154,12 @@ contract TokenFactory is Create3, Initializable {
 
     IAxelarGateway public testMeTwo;
     bytes32 public minter;
+    address public wazy;
 
     function testMe() external {
         testMeTwo = s_gateway;
         // minter = s_accessControl.MINTER_ROLE();
-        testMeTwo.governance();
+        wazy = testMeTwo.governance();
     }
 
     //deploy native token on eth (bypass semi native)
