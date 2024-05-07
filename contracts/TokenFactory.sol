@@ -1,27 +1,24 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 import {StringToAddress, AddressToString} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressString.sol";
+import {AddressBytes} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressBytes.sol";
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
 import "@axelar-network/interchain-token-service/contracts/interfaces/IInterchainTokenService.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
-import "@axelar-network/interchain-token-service/contracts/interfaces/IInterchainTokenService.sol";
 import "@axelar-network/interchain-token-service/contracts/interfaces/ITokenManagerType.sol";
-
-// import "axelar-gmp-sdk-solidity/contracts/deploy/Create3.sol";
 import "./helpers/Create3.sol";
 import "./NativeTokenV1.sol";
 import "./MultichainToken.sol";
 import "./AccessControl.sol";
 import "./helpers/Deployer.sol";
 
-// contract TokenFactory is Create3Deployer, Initializable {
-contract TokenFactory is Initializable, Create3 {
+contract TokenFactory is Create3, Initializable {
     using AddressToString for address;
+    using AddressBytes for address;
 
     /*************\
         ERRORS
@@ -37,9 +34,8 @@ contract TokenFactory is Initializable, Create3 {
     /*************/
     IInterchainTokenService public s_its;
     AccessControl public s_accessControl;
-    IAxelarGasService public s_gasService;
+    IAxelarGasService private s_gasService;
     IAxelarGateway public s_gateway;
-    address public s_semiNativeToken;
     Deployer public s_deployer;
     bytes32 public S_SALT_PROXY; //123
     bytes32 public S_SALT_IMPL; //1234
@@ -65,6 +61,21 @@ contract TokenFactory is Initializable, Create3 {
     /*************\
      INITIALIZATION
     /*************/
+    // constructor(
+    //     IInterchainTokenService _its,
+    //     address _gasService,
+    //     IAxelarGateway _gateway,
+    //     AccessControl _accessControl
+    // ) {
+    //     s_its = _its;
+    //     s_gasService = IAxelarGasService(_gasService);
+    //     s_gateway = _gateway;
+    //     s_accessControl = _accessControl;
+
+    //     S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
+    //     S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
+    //     S_SALT_ITS_TOKEN = 0x0000000000000000000000000000000000000000000000000000000000003039; //12345
+    // }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -73,14 +84,17 @@ contract TokenFactory is Initializable, Create3 {
 
     function initialize(
         IInterchainTokenService _its,
-        IAxelarGasService _gasService,
-        IAxelarGateway _gateway,
-        AccessControl _accessControl
-    ) external initializer {
-        s_its = _its;
-        s_gasService = _gasService;
-        s_accessControl = _accessControl;
-        s_gateway = _gateway;
+        address _gasService,
+        IAxelarGateway _gateway
+    )
+        external
+        // AccessControl _accessControl
+        initializer
+    {
+        s_its = IInterchainTokenService(_its);
+        s_gasService = IAxelarGasService(_gasService);
+        s_gateway = IAxelarGateway(_gateway);
+        s_accessControl = AccessControl(address(0));
 
         S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
         S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
@@ -92,11 +106,9 @@ contract TokenFactory is Initializable, Create3 {
     \***************************/
 
     //param for deployTokenManager()
-    //1 = semi native
-    //2 = native
     function getItsDeploymentParams() external view returns (bytes memory) {
         address computedTokenAddr = getExpectedAddress(S_SALT_PROXY);
-        return abi.encode(abi.encode(msg.sender), computedTokenAddr);
+        return abi.encode(msg.sender.toBytes(), computedTokenAddr);
     }
 
     //exec() will deploy create3 token
@@ -124,7 +136,6 @@ contract TokenFactory is Initializable, Create3 {
         bytes memory gmpPayload = abi.encode(
             S_SALT_IMPL,
             S_SALT_PROXY,
-            // implementationAddrComputed,
             itsTokenId
         );
 
@@ -144,14 +155,23 @@ contract TokenFactory is Initializable, Create3 {
         );
     }
 
+    IAxelarGateway public testMeTwo;
+    bytes32 public minter;
+
+    function testMe() external {
+        testMeTwo = s_gateway;
+        // minter = s_accessControl.MINTER_ROLE();
+        testMeTwo.governance();
+    }
+
     //deploy native token on eth (bypass semi native)
     function deployHomeNative(
         string calldata _destChain,
         bytes calldata _itsTokenParams, //from getItsDeploymentParams()
         uint256 _burnRate,
-        uint256 _txFeeRate
-    ) external payable isAdmin returns (address newTokenProxy) {
-        // if (block.chainid != 1 && block.chainid != 11155111) revert InvalidChain();
+        uint256 _txFeeRate /*isAdmin*/
+    ) external payable returns (address newTokenProxy) {
+        // ) external payable returns (address newTokenProxy) {
         if (s_nativeTokens[_destChain] != address(0))
             revert TokenAlreadyDeployed();
 
@@ -163,6 +183,7 @@ contract TokenFactory is Initializable, Create3 {
         if (newTokenImpl == address(0)) revert DeploymentFailed();
 
         // Deploy token manager
+
         bytes32 itsTokenId = s_its.deployTokenManager(
             S_SALT_ITS_TOKEN,
             _destChain,
