@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades"
 import "hardhat-contract-sizer";
+import '@nomicfoundation/hardhat-chai-matchers'
 import fs from 'fs-extra'; // Imported directly with TypeScript support
 
 // Task to clean up the .openzeppelin directory
