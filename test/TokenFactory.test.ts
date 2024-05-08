@@ -91,6 +91,7 @@ describe('TokenFactory', () => {
     describe('deployRemoteSemiNativeToken', () => {
         describe('src', () => {
             it('should successfully trigger multichain tx', async () => {
+
                 const saltItsToken = await factoryProxy.S_SALT_ITS_TOKEN();
                 const saltProxy = await factoryProxy.S_SALT_PROXY();
                 const expectedId = calculateExpectedTokenId(

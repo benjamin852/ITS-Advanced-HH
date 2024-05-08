@@ -201,4 +201,23 @@ contract TokenFactory is Create3, Initializable {
       abi.encode(_liveImpl, _proxyAdmin, initData)
     );
   }
+
+  function _getEncodedCreationCodeSemiNative(
+    address _proxyAdmin,
+    address _liveImpl,
+    bytes32 _itsTokenId
+  ) internal view returns (bytes memory proxyCreationCode) {
+    bytes memory initData = abi.encodeWithSelector(
+      MultichainToken.initialize.selector,
+      s_accessControl,
+      s_its,
+      _itsTokenId
+    );
+
+    //TODO change from bytes.concat() to abi.encodePacked()
+    proxyCreationCode = bytes.concat(
+      type(TransparentUpgradeableProxy).creationCode,
+      abi.encode(_liveImpl, _proxyAdmin, initData)
+    );
+  }
 }
