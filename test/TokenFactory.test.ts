@@ -92,20 +92,20 @@ describe('TokenFactory', () => {
         describe('src', () => {
             it('should successfully trigger multichain tx', async () => {
 
-                const saltItsToken = await factoryProxy.S_SALT_ITS_TOKEN();
-                const saltProxy = await factoryProxy.S_SALT_PROXY();
-                const expectedId = calculateExpectedTokenId(
-                    abiCoder,
-                    await factoryProxy.getAddress()
-                );
-                const payload = abiCoder.encode(
-                    ['bytes32', 'bytes32', 'bytes32'],
-                    [saltItsToken, saltProxy, expectedId]
-                );
-                const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
-                console.log(itsDeploymentParams, 'itsdeploymentparams')
+                // const saltItsToken = await factoryProxy.S_SALT_ITS_TOKEN();
+                // const saltProxy = await factoryProxy.S_SALT_PROXY();
+                // const expectedId = calculateExpectedTokenId(
+                //     abiCoder,
+                //     await factoryProxy.getAddress()
+                // );
+                // const payload = abiCoder.encode(
+                //     ['bytes32', 'bytes32', 'bytes32'],
+                //     [saltItsToken, saltProxy, expectedId]
+                // );
+                // const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
+                // console.log(itsDeploymentParams, 'itsdeploymentparams')
 
-                await factoryProxy.deployRemoteSemiNativeToken('avalanche', itsDeploymentParams)
+                await factoryProxy.deployRemoteSemiNativeToken('avalanche')
             });
         });
         describe('dest', () => { });

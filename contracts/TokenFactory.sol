@@ -28,6 +28,7 @@ contract TokenFactory is Create3, Initializable {
   error NotApprovedByGateway();
   error TokenAlreadyDeployed();
   error InvalidChain();
+  error InvalidSemiNativetoken();
 
   /*************\
         STORAGE
@@ -89,14 +90,13 @@ contract TokenFactory is Create3, Initializable {
   //param for deployTokenManager()
   function getItsDeploymentParams() external view returns (bytes memory) {
     address computedTokenAddr = getExpectedAddress(S_SALT_PROXY);
-    return abi.encode(msg.sender.toBytes(), computedTokenAddr);
+    return abi.encode(address(this).toBytes(), computedTokenAddr);
   }
 
   //exec() will deploy create3 token
-  //crosschain semi native deployment
+  //crosschain semi native deployment (does not wire up to its)
   function deployRemoteSemiNativeToken(
-    string calldata _destChain,
-    bytes calldata _itsTokenParams // from getItsDeploymentParams()
+    string calldata _destChain
   ) external payable {
     //Add revert if token already deployed
     if (
@@ -104,17 +104,27 @@ contract TokenFactory is Create3, Initializable {
       s_nativeTokens[_destChain] != address(0)
     ) revert TokenAlreadyDeployed();
 
-    // deploy manager remote for address
-    bytes32 itsTokenId = s_its.deployTokenManager(
-      S_SALT_ITS_TOKEN,
-      _destChain,
-      ITokenManagerType.TokenManagerType.MINT_BURN,
-      _itsTokenParams,
-      msg.value
+    address computedImplAddr = _create3Address(S_SALT_IMPL);
+    bytes32 computedTokenId = keccak256(
+      abi.encode(
+        keccak256('its-interchain-token-id'),
+        address(this), //sender
+        S_SALT_ITS_TOKEN
+      )
+    );
+    bytes memory creationCodeProxy = _getEncodedCreationCodeSemiNative(
+      address(this), //proxyAdmin
+      computedImplAddr,
+      computedTokenId
     );
 
     // Set Payload To Deploy Crosschain Token with Init Args
-    bytes memory gmpPayload = abi.encode(S_SALT_IMPL, S_SALT_PROXY, itsTokenId);
+    bytes memory gmpPayload = abi.encode(
+      S_SALT_IMPL,
+      S_SALT_PROXY,
+      creationCodeProxy,
+      address(this)
+    );
 
     s_gasService.payNativeGasForContractCall{ value: msg.value }(
       address(this),
@@ -129,6 +139,22 @@ contract TokenFactory is Create3, Initializable {
       _destChain,
       address(s_deployer).toString(),
       gmpPayload
+    );
+  }
+
+  function connectSemiNativeToIts(
+    string calldata _destChain,
+    bytes calldata _itsTokenParams
+  ) external payable {
+    if (s_semiNativeTokens[_destChain] == address(0))
+      revert InvalidSemiNativetoken();
+    // deploy manager remote for address
+    bytes32 itsTokenId = s_its.deployTokenManager(
+      S_SALT_ITS_TOKEN,
+      _destChain,
+      ITokenManagerType.TokenManagerType.MINT_BURN,
+      _itsTokenParams,
+      msg.value
     );
   }
 
@@ -174,6 +200,27 @@ contract TokenFactory is Create3, Initializable {
     s_nativeTokens['ethereum'] = newTokenProxy;
   }
 
+  function execute(
+    bytes32 _commandId,
+    string calldata _sourceChain,
+    string calldata _sourceAddress,
+    bytes calldata _payload
+  ) external {
+    bytes32 payloadHash = keccak256(_payload);
+
+    if (
+      !s_gateway.validateContractCall(
+        _commandId,
+        _sourceChain,
+        _sourceAddress,
+        payloadHash
+      )
+    ) revert NotApprovedByGateway();
+
+    address liveTokenAddress = abi.decode(_payload, (address));
+    s_semiNativeTokens[_sourceChain] = liveTokenAddress;
+  }
+
   function getExpectedAddress(bytes32 _salt) public view returns (address) {
     return _create3Address(_salt);
   }
@@ -184,7 +231,7 @@ contract TokenFactory is Create3, Initializable {
 
   function _getEncodedCreationCodeNative(
     address _proxyAdmin,
-    address _liveImpl,
+    address _implAddr,
     uint256 _burnRate,
     uint256 _txFeeRate
   ) internal view returns (bytes memory proxyCreationCode) {
@@ -198,13 +245,13 @@ contract TokenFactory is Create3, Initializable {
 
     proxyCreationCode = abi.encodePacked(
       type(TransparentUpgradeableProxy).creationCode,
-      abi.encode(_liveImpl, _proxyAdmin, initData)
+      abi.encode(_implAddr, _proxyAdmin, initData)
     );
   }
 
   function _getEncodedCreationCodeSemiNative(
     address _proxyAdmin,
-    address _liveImpl,
+    address _implAddr,
     bytes32 _itsTokenId
   ) internal view returns (bytes memory proxyCreationCode) {
     bytes memory initData = abi.encodeWithSelector(
@@ -217,7 +264,7 @@ contract TokenFactory is Create3, Initializable {
     //TODO change from bytes.concat() to abi.encodePacked()
     proxyCreationCode = bytes.concat(
       type(TransparentUpgradeableProxy).creationCode,
-      abi.encode(_liveImpl, _proxyAdmin, initData)
+      abi.encode(_implAddr, _proxyAdmin, initData)
     );
   }
 }

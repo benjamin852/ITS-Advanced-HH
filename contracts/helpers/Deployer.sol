@@ -4,6 +4,7 @@ import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
 import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
+import '@axelar-network/interchain-token-service/contracts/interfaces/ITokenManagerType.sol';
 
 import '../MultichainToken.sol';
 import '../NativeTokenV1.sol';
@@ -25,10 +26,6 @@ contract Deployer is Initializable, Create3 {
   AccessControl public s_accessControl;
   IAxelarGateway public s_gateway;
 
-  /*************\
-        EVENTS
-    /*************/
-  event MultichainTokenDeployed(address tokenAddress);
 
   /*************\
      INITIALIZATION
@@ -66,16 +63,13 @@ contract Deployer is Initializable, Create3 {
       )
     ) revert NotApprovedByGateway();
 
-    (bytes32 saltImplementation, bytes32 saltProxy, bytes32 itsTokenId) = abi
-      .decode(_payload, (bytes32, bytes32, bytes32));
+    (
+      bytes32 saltImplementation,
+      bytes32 saltProxy,
+      bytes memory creationCodeProxy,
+      address factoryAddr
 
-    // bytes32 itsTokenId = s_its.deployTokenManager(
-    //   S_SALT_ITS_TOKEN,
-    //   _destChain,
-    //   ITokenManagerType.TokenManagerType.MINT_BURN,
-    //   _itsTokenParams,
-    //   msg.value
-    // );
+    ) = abi.decode(_payload, (bytes32, bytes32, bytes, address));
 
     // Deploy implementation
     address newTokenImpl = _create3(
@@ -85,39 +79,12 @@ contract Deployer is Initializable, Create3 {
     if (newTokenImpl == address(0)) revert DeploymentFailed();
 
     // Deploy ProxyAdmin
-    ProxyAdmin proxyAdmin = new ProxyAdmin(msg.sender);
+    ProxyAdmin proxyAdmin = new ProxyAdmin(factoryAddr);
 
-    bytes memory creationCode = _getEncodedCreationCodeSemiNative(
-      address(proxyAdmin),
-      newTokenImpl,
-      itsTokenId
-    );
 
-    // Deploy the contract
-    address newToken = _create3(creationCode, saltProxy);
+    address newToken = _create3(creationCodeProxy, saltProxy);
     if (newToken == address(0)) revert DeploymentFailed();
-    emit MultichainTokenDeployed(newToken);
-  }
 
-  /***************************\
-       INTERNAL FUNCTIONALITY
-    \***************************/
-  function _getEncodedCreationCodeSemiNative(
-      address _proxyAdmin,
-      address _liveImpl,
-      bytes32 _itsTokenId
-  ) internal view returns (bytes memory proxyCreationCode) {
-      bytes memory initData = abi.encodeWithSelector(
-          MultichainToken.initialize.selector,
-          s_accessControl,
-          s_its,
-          _itsTokenId
-      );
-
-      //TODO change from bytes.concat() to abi.encodePacked()
-      proxyCreationCode = bytes.concat(
-          type(TransparentUpgradeableProxy).creationCode,
-          abi.encode(_liveImpl, _proxyAdmin, initData)
-      );
+    s_gateway.callContract(_sourceChain, _sourceAddress, abi.encode(newToken));
   }
 }
