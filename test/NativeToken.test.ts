@@ -22,13 +22,13 @@ describe('NativeTokenV1', () => {
     // Initialize a Polygon network
     polygon = await createNetwork({
       name: 'Polygon',
-      port: 1545,
+      port: 1547,
     });
 
     // Initialize an Avalanche network
     avalanche = await createNetwork({
       name: 'Avalanche',
-      port: 1546,
+      port: 1548,
     });
     [senderPolygon, receiverPolygon] = polygon.userWallets;
     [receiverAvalanche] = avalanche.userWallets;
@@ -103,7 +103,7 @@ describe('NativeTokenV1', () => {
     it('should set new tx fee rate', async () => {
       const txFeeRateBefore = await token.s_txFeeRate();
       expect(await token.s_txFeeRate()).to.equal(txFeeRateBefore);
-      await token.setBurnRate(123);
+      await token.setTxFee(123);
       expect(await token.s_txFeeRate()).to.equal(BigInt(123));
     });
   });

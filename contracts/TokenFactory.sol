@@ -61,22 +61,6 @@ contract TokenFactory is Create3, Initializable {
   /*************\
      INITIALIZATION
     /*************/
-  // constructor(
-  //     IInterchainTokenService _its,
-  //     address _gasService,
-  //     IAxelarGateway _gateway,
-  //     AccessControl _accessControl
-  // ) {
-  //     s_its = _its;
-  //     s_gasService = IAxelarGasService(_gasService);
-  //     s_gateway = _gateway;
-  //     s_accessControl = _accessControl;
-
-  //     S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
-  //     S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
-  //     S_SALT_ITS_TOKEN = 0x0000000000000000000000000000000000000000000000000000000000003039; //12345
-  // }
-
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     _disableInitializers();
@@ -148,7 +132,7 @@ contract TokenFactory is Create3, Initializable {
     );
   }
 
-  //deploy native token on eth 
+  //deploy native token on eth
   function deployHomeNative(
     bytes calldata _itsTokenParams, //from getItsDeploymentParams()
     uint256 _burnRate,

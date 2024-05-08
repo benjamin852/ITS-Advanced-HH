@@ -115,11 +115,6 @@ contract NativeTokenV1 is
     _mint(msg.sender, reward);
     emit RewardClaimed(msg.sender, reward);
   }
-
-  function wrapToSemiNative(uint256 _amount) external {
-    //1. approve(address(semiNative), _amount); -> semi native can now spend native
-  }
-
   /***************************\
        INTERNAL FUNCTIONALITY
     \***************************/
