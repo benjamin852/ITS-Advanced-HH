@@ -12,13 +12,15 @@ describe('TokenFactory', () => {
     let factoryProxy: Contract;
     let accessControlProxy: Contract;
     let deployer: Signer;
-    let addr1: Signer;
 
     let polygonUserWallet: Wallet;
     let avalancheUserWallet: Wallet;
 
     const burnRate = 10000;
     const txFeeRate = 20000;
+
+    const abiCoder = new AbiCoder();
+
 
     before(async () => {
         // Initialize a Polygon network
@@ -30,6 +32,7 @@ describe('TokenFactory', () => {
         // Initialize an Avalanche network
         avalanche = await createNetwork({
             name: 'Avalanche',
+            port: 1546
         });
         [polygonUserWallet] = polygon.userWallets;
         [avalancheUserWallet] = avalanche.userWallets;
@@ -38,7 +41,7 @@ describe('TokenFactory', () => {
     beforeEach(async () => {
         AccessControl = await ethers.getContractFactory('AccessControl');
         TokenFactory = await ethers.getContractFactory('TokenFactory');
-        [deployer, addr1] = await ethers.getSigners();
+        [deployer] = await ethers.getSigners();
         accessControlProxy = await upgrades.deployProxy(
             AccessControl,
             [await deployer.getAddress()],
@@ -56,10 +59,9 @@ describe('TokenFactory', () => {
         );
     });
 
-    // afterEach(async () => {
-    //     await relay();
-    // })
-
+    afterEach(async () => {
+        await relay();
+    })
     describe('initialize', () => {
         it('should set its address', async () => {
             expect(polygon.interchainTokenService.address).to.equal(
@@ -80,8 +82,13 @@ describe('TokenFactory', () => {
             );
         });
     });
+    // describe('deployRemoteSemiNativeToken', () => {
+    //     describe('src', () => {
+    //         it('')
+    //     })
+    //     describe('dest')
+    // })
     describe('deployHomeNative', () => {
-        const abiCoder = new AbiCoder();
         it('Should deploy new token at correct address', async () => {
             const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
 
