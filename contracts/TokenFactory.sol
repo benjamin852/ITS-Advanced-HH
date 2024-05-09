@@ -14,7 +14,7 @@ import './helpers/Create3.sol';
 import './NativeTokenV1.sol';
 import './MultichainToken.sol';
 import './AccessControl.sol';
-import './helpers/Deployer.sol';
+import './Deployer.sol';
 
 contract TokenFactory is Create3, Initializable {
   using AddressToString for address;
@@ -28,7 +28,7 @@ contract TokenFactory is Create3, Initializable {
   error NotApprovedByGateway();
   error TokenAlreadyDeployed();
   error InvalidChain();
-  error InvalidSemiNativetoken();
+  error InvalidToken();
 
   /*************\
         STORAGE
@@ -56,7 +56,7 @@ contract TokenFactory is Create3, Initializable {
   /*************\
         EVENTS
     /*************/
-  event NativeTokenDeployed(address tokenAddress, bytes32 tokenId);
+  event NativeTokenDeployed(address tokenAddress);
   event MultichainTokenDeployed(address tokenAddress);
 
   /*************\
@@ -71,12 +71,14 @@ contract TokenFactory is Create3, Initializable {
     IInterchainTokenService _its,
     IAxelarGasService _gasService,
     IAxelarGateway _gateway,
-    AccessControl _accessControl
+    AccessControl _accessControl,
+    Deployer _deployer
   ) external initializer {
     s_its = _its;
     s_gasService = _gasService;
     s_gateway = _gateway;
     s_accessControl = _accessControl;
+    s_deployer = _deployer;
 
     S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
     S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
@@ -112,18 +114,16 @@ contract TokenFactory is Create3, Initializable {
         S_SALT_ITS_TOKEN
       )
     );
-    bytes memory creationCodeProxy = _getEncodedCreationCodeSemiNative(
-      address(this), //proxyAdmin
-      computedImplAddr,
-      computedTokenId
-    );
 
     // Set Payload To Deploy Crosschain Token with Init Args
     bytes memory gmpPayload = abi.encode(
       S_SALT_IMPL,
       S_SALT_PROXY,
-      creationCodeProxy,
-      address(this)
+      computedTokenId,
+      address(this),
+      s_its,
+      type(MultichainToken).creationCode,
+      MultichainToken.initialize.selector
     );
 
     s_gasService.payNativeGasForContractCall{ value: msg.value }(
@@ -142,14 +142,16 @@ contract TokenFactory is Create3, Initializable {
     );
   }
 
-  function connectSemiNativeToIts(
+  function connectTokenToITS(
     string calldata _destChain,
     bytes calldata _itsTokenParams
   ) external payable {
-    if (s_semiNativeTokens[_destChain] == address(0))
-      revert InvalidSemiNativetoken();
-    // deploy manager remote for address
-    bytes32 itsTokenId = s_its.deployTokenManager(
+    if (s_nativeTokens['ethereum'] == address(0)) revert InvalidToken();
+    if (
+      keccak256(abi.encode(_destChain)) != keccak256(abi.encode('')) &&
+      s_semiNativeTokens[_destChain] == address(0)
+    ) revert InvalidToken();
+    s_its.deployTokenManager(
       S_SALT_ITS_TOKEN,
       _destChain,
       ITokenManagerType.TokenManagerType.MINT_BURN,
@@ -160,7 +162,6 @@ contract TokenFactory is Create3, Initializable {
 
   //deploy native token on eth
   function deployHomeNative(
-    bytes calldata _itsTokenParams, //from getItsDeploymentParams()
     uint256 _burnRate,
     uint256 _txFeeRate /*isAdmin*/
   ) external payable returns (address newTokenProxy) {
@@ -175,7 +176,7 @@ contract TokenFactory is Create3, Initializable {
     if (newTokenImpl == address(0)) revert DeploymentFailed();
 
     // Deploy ProxyAdmin
-    ProxyAdmin proxyAdmin = new ProxyAdmin(msg.sender);
+    ProxyAdmin proxyAdmin = new ProxyAdmin(address(this));
 
     // Generate Proxy Creation Code (Bytecode + Constructor)
     bytes memory proxyCreationCode = _getEncodedCreationCodeNative(
@@ -188,15 +189,7 @@ contract TokenFactory is Create3, Initializable {
     newTokenProxy = _create3(proxyCreationCode, S_SALT_PROXY);
     if (newTokenProxy == address(0)) revert DeploymentFailed();
 
-    // Deploy token manager
-    bytes32 tokenId = s_its.deployTokenManager(
-      S_SALT_ITS_TOKEN,
-      '',
-      ITokenManagerType.TokenManagerType.LOCK_UNLOCK,
-      _itsTokenParams,
-      msg.value
-    );
-    emit NativeTokenDeployed(newTokenProxy, tokenId);
+    emit NativeTokenDeployed(newTokenProxy);
     s_nativeTokens['ethereum'] = newTokenProxy;
   }
 
@@ -244,25 +237,6 @@ contract TokenFactory is Create3, Initializable {
     );
 
     proxyCreationCode = abi.encodePacked(
-      type(TransparentUpgradeableProxy).creationCode,
-      abi.encode(_implAddr, _proxyAdmin, initData)
-    );
-  }
-
-  function _getEncodedCreationCodeSemiNative(
-    address _proxyAdmin,
-    address _implAddr,
-    bytes32 _itsTokenId
-  ) internal view returns (bytes memory proxyCreationCode) {
-    bytes memory initData = abi.encodeWithSelector(
-      MultichainToken.initialize.selector,
-      s_accessControl,
-      s_its,
-      _itsTokenId
-    );
-
-    //TODO change from bytes.concat() to abi.encodePacked()
-    proxyCreationCode = bytes.concat(
       type(TransparentUpgradeableProxy).creationCode,
       abi.encode(_implAddr, _proxyAdmin, initData)
     );

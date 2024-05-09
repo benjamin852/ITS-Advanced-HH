@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Celo",
+    "chainId": 44787,
+    "rpc": "https://alfajores-forno.celo-testnet.org",
+    "gateway": "0xe432150cce91c13a887f7D836923d5597adD8E31",
+    "gasService": "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6",
+    "its": "0x83a93500d23Fbc3e82B410aD07A6a9F7A0670D66",
+    "wmatic": "0x21ba4f6aEdA155DD77Cc33Fb93646910543F0380",
+    "aUSDC": "0x254d06f33bDc5b8ee05b2ea472107E300226659A",
+    "tokenName": "Celo",
+    "tokenSymbol": "CELO"
+  },
+  {
+    "name": "BNB",
+    "chainId": 97,
+    "rpc": "https://bsc-testnet-rpc.publicnode.com",
+    "aUSDC": "0x75Cc4fDf1ee3E781C1A3Ee9151D5c6Ce34Cf5C61",
+    "gateway": "0x4D147dCb984e6affEEC47e44293DA442580A3Ec0",
+    "gasService": "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6",
+    "its": "0x83a93500d23Fbc3e82B410aD07A6a9F7A0670D66",
+    "tokenName": "BNB",
+    "tokenSymbol": "BNB"
+  }
+]

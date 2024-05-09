@@ -6,7 +6,7 @@
     "hardhat": "^2.20.1"
   },
   "scripts": {
-    "test": "hardhat cleanOpenZeppelin && npx hardhat test --network polygon"
+    "test": "hardhat cleanOpenZeppelin && npx hardhat test --network polygonLocalTest"
   },
   "dependencies": {
     "@axelar-network/axelar-gmp-sdk-solidity": "^5.8.0",

@@ -16,8 +16,10 @@ describe('TokenFactory', () => {
     let avalanche: any;
     let TokenFactory: any;
     let AccessControl: any;
+    let Deployer: any;
     let factoryProxy: Contract;
     let accessControlProxy: Contract;
+    let deployerProxy: Contract;
     let deployer: Signer;
 
     let polygonUserWallet: Wallet;
@@ -47,12 +49,14 @@ describe('TokenFactory', () => {
     beforeEach(async () => {
         AccessControl = await ethers.getContractFactory('AccessControl');
         TokenFactory = await ethers.getContractFactory('TokenFactory');
+        Deployer = await ethers.getContractFactory('Deployer');
         [deployer] = await ethers.getSigners();
         accessControlProxy = await upgrades.deployProxy(
             AccessControl,
             [await deployer.getAddress()],
             { initializer: 'initialize' }
         );
+        deployerProxy = await upgrades.deployProxy(Deployer, [await deployer.getAddress()], { initializer: 'initialize' })
         factoryProxy = await upgrades.deployProxy(
             TokenFactory,
             [
@@ -60,6 +64,7 @@ describe('TokenFactory', () => {
                 polygon.gasService.address,
                 polygon.gateway.address,
                 accessControlProxy.target,
+                deployerProxy.target
             ],
             { initializer: 'initialize' }
         );
