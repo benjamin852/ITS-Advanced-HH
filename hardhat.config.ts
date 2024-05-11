@@ -34,6 +34,7 @@ task('deployRemoteBNB', 'deploy deployer on remote chain (BNB for testing').setA
     { initializer: 'initialize' }
   );
   const deployer = await hre.upgrades.deployProxy(Deployer, [
+    chains[1].its,
     accessControlProxy.target,
     chains[1].gateway
   ])

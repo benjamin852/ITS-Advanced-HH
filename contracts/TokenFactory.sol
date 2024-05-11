@@ -106,7 +106,6 @@ contract TokenFactory is Create3, Initializable {
       s_nativeTokens[_destChain] != address(0)
     ) revert TokenAlreadyDeployed();
 
-    address computedImplAddr = _create3Address(S_SALT_IMPL);
     bytes32 computedTokenId = keccak256(
       abi.encode(
         keccak256('its-interchain-token-id'),
@@ -117,11 +116,8 @@ contract TokenFactory is Create3, Initializable {
 
     // Set Payload To Deploy Crosschain Token with Init Args
     bytes memory gmpPayload = abi.encode(
-      S_SALT_IMPL,
-      S_SALT_PROXY,
       computedTokenId,
       address(this),
-      s_its,
       type(MultichainToken).creationCode,
       MultichainToken.initialize.selector
     );
@@ -139,24 +135,6 @@ contract TokenFactory is Create3, Initializable {
       _destChain,
       address(s_deployer).toString(),
       gmpPayload
-    );
-  }
-
-  function connectTokenToITS(
-    string calldata _destChain,
-    bytes calldata _itsTokenParams
-  ) external payable {
-    if (s_nativeTokens['ethereum'] == address(0)) revert InvalidToken();
-    if (
-      keccak256(abi.encode(_destChain)) != keccak256(abi.encode('')) &&
-      s_semiNativeTokens[_destChain] == address(0)
-    ) revert InvalidToken();
-    s_its.deployTokenManager(
-      S_SALT_ITS_TOKEN,
-      _destChain,
-      ITokenManagerType.TokenManagerType.MINT_BURN,
-      _itsTokenParams,
-      msg.value
     );
   }
 
@@ -193,6 +171,26 @@ contract TokenFactory is Create3, Initializable {
     s_nativeTokens['ethereum'] = newTokenProxy;
   }
 
+  function connectTokenToITS(
+    string calldata _destChain,
+    bytes calldata _itsTokenParams
+  ) external payable {
+    if (s_nativeTokens['ethereum'] == address(0)) revert InvalidToken();
+    if (
+      keccak256(abi.encode(_destChain)) != keccak256(abi.encode('')) &&
+      s_semiNativeTokens[_destChain] == address(0)
+    ) revert InvalidToken();
+    s_its.deployTokenManager(
+      S_SALT_ITS_TOKEN,
+      _destChain,
+      ITokenManagerType.TokenManagerType.MINT_BURN,
+      _itsTokenParams,
+      msg.value
+    );
+  }
+
+  string public helloWorld;
+
   function execute(
     bytes32 _commandId,
     string calldata _sourceChain,
@@ -200,7 +198,6 @@ contract TokenFactory is Create3, Initializable {
     bytes calldata _payload
   ) external {
     bytes32 payloadHash = keccak256(_payload);
-
     if (
       !s_gateway.validateContractCall(
         _commandId,
@@ -209,7 +206,7 @@ contract TokenFactory is Create3, Initializable {
         payloadHash
       )
     ) revert NotApprovedByGateway();
-
+    helloWorld = 'HELLO!!!';
     address liveTokenAddress = abi.decode(_payload, (address));
     s_semiNativeTokens[_sourceChain] = liveTokenAddress;
   }
