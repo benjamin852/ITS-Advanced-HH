@@ -189,8 +189,6 @@ contract TokenFactory is Create3, Initializable {
     );
   }
 
-  string public helloWorld;
-
   function execute(
     bytes32 _commandId,
     string calldata _sourceChain,
@@ -206,8 +204,11 @@ contract TokenFactory is Create3, Initializable {
         payloadHash
       )
     ) revert NotApprovedByGateway();
-    helloWorld = 'HELLO!!!';
-    address liveTokenAddress = abi.decode(_payload, (address));
+    address liveTokenAddress = abi.decode(
+      _payload,
+      (address)
+    );
+    //Avalanche
     s_semiNativeTokens[_sourceChain] = liveTokenAddress;
   }
 

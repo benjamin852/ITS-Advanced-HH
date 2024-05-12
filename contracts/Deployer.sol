@@ -51,10 +51,6 @@ contract Deployer is Initializable, Create3 {
        EXTERNAL FUNCTIONALITY
     \***************************/
 
-  event TestMe(string hello);
-  string public theTest;
-  string public theTestTwo;
-
   //on dest chain deploy token manager for new ITS token
   function execute(
     bytes32 _commandId,
@@ -70,8 +66,6 @@ contract Deployer is Initializable, Create3 {
         keccak256(_payload)
       )
     ) revert NotApprovedByGateway();
-    theTest = 'Test One!!!';
-    emit TestMe('wazyyyyyy');
     (
       bytes32 computedTokenId,
       address factoryAddr,
@@ -80,29 +74,22 @@ contract Deployer is Initializable, Create3 {
     ) = abi.decode(_payload, (bytes32, address, bytes, bytes4));
 
     // Deploy implementation
-    // address newTokenImpl = _create3(semiNativeTokenBytecode, S_SALT_IMPL);
-    // if (newTokenImpl == address(0)) revert DeploymentFailed();
+    address newTokenImpl = _create3(semiNativeTokenBytecode, S_SALT_IMPL);
+    if (newTokenImpl == address(0)) revert DeploymentFailed();
 
     // Deploy ProxyAdmin
-    // ProxyAdmin proxyAdmin = new ProxyAdmin(factoryAddr);
+    ProxyAdmin proxyAdmin = new ProxyAdmin(factoryAddr);
 
-    // bytes memory creationCodeProxy = _getEncodedCreationCodeSemiNative(
-    //   address(proxyAdmin),
-    //   newTokenImpl,
-    //   computedTokenId,
-    //   semiNativeSelector
-    // );
-
-    //EASY ERROR TO MISS
-    // address newToken = _create3(creationCodeProxy, S_SALT_PROXY);
-    // if (newToken == address(0)) revert DeploymentFailed();
-    theTestTwo = 'THE TEST TWO!!';
-    // s_gateway.callContract(_sourceChain, _sourceAddress, abi.encode(newToken));
-    s_gateway.callContract(
-      _sourceChain,
-      _sourceAddress,
-      abi.encode(address(0))
+    bytes memory creationCodeProxy = _getEncodedCreationCodeSemiNative(
+      address(proxyAdmin),
+      newTokenImpl,
+      computedTokenId,
+      semiNativeSelector
     );
+
+    address newToken = _create3(creationCodeProxy, S_SALT_PROXY);
+    if (newToken == address(0)) revert DeploymentFailed();
+    s_gateway.callContract(_sourceChain, _sourceAddress, abi.encode(newToken));
   }
 
   function _getEncodedCreationCodeSemiNative(

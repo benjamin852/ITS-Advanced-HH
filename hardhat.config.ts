@@ -24,7 +24,7 @@ task(
     }
   }
 );
-task('deployRemoteBNB', 'deploy deployer on remote chain (BNB for testing').setAction(async (taskArgs, hre) => {
+task('deployAvalanche', 'deploy deployer on remote chain (Avalanche for testing').setAction(async (taskArgs, hre) => {
   const connectedWallet = getWallet(chains[1].rpc, hre)
   const AccessControl = await hre.ethers.getContractFactory('AccessControl');
   const Deployer = await hre.ethers.getContractFactory('Deployer');
@@ -38,7 +38,7 @@ task('deployRemoteBNB', 'deploy deployer on remote chain (BNB for testing').setA
     accessControlProxy.target,
     chains[1].gateway
   ])
-  console.log(`BNB deployer contract address: ${deployer.target}`)
+  console.log(`Avalanche deployer contract address: ${deployer.target}`)
 
 })
 task('deployHomeCelo', 'deploy factory on home chain, (celo for testing)')
@@ -88,7 +88,7 @@ const config: HardhatUserConfig = {
       accounts: [`0x${process.env.PRIVATE_KEY}`],
       chainId: chains[0].chainId,
     },
-    BNB: {
+    avalanche: {
       url: chains[1].rpc,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
       chainId: chains[1].chainId,
