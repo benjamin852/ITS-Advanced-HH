@@ -41,6 +41,7 @@ contract TokenFactory is Create3, Initializable {
   bytes32 public S_SALT_PROXY; //123
   bytes32 public S_SALT_IMPL; //1234
   bytes32 public S_SALT_ITS_TOKEN; //12345
+  string public s_homeChain;
 
   mapping(string => address) public s_nativeTokens;
   mapping(string => address) public s_semiNativeTokens;
@@ -72,13 +73,15 @@ contract TokenFactory is Create3, Initializable {
     IAxelarGasService _gasService,
     IAxelarGateway _gateway,
     AccessControl _accessControl,
-    Deployer _deployer
+    Deployer _deployer,
+    string memory _homeChain
   ) external initializer {
     s_its = _its;
     s_gasService = _gasService;
     s_gateway = _gateway;
     s_accessControl = _accessControl;
     s_deployer = _deployer;
+    s_homeChain = _homeChain;
 
     S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
     S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
@@ -141,10 +144,11 @@ contract TokenFactory is Create3, Initializable {
   //deploy native token on eth
   function deployHomeNative(
     uint256 _burnRate,
-    uint256 _txFeeRate /*isAdmin*/
+    uint256 _txFeeRate /*isAdmin*/,
+    bytes calldata _itsParams
   ) external payable returns (address newTokenProxy) {
-    // require(block.chainid == 1, 'only deployable from ethereum');
-    if (s_nativeTokens['ethereum'] != address(0)) revert TokenAlreadyDeployed();
+    if (s_nativeTokens[s_homeChain] != address(0))
+      revert TokenAlreadyDeployed();
 
     // Deploy implementation
     address newTokenImpl = _create3(
@@ -167,15 +171,23 @@ contract TokenFactory is Create3, Initializable {
     newTokenProxy = _create3(proxyCreationCode, S_SALT_PROXY);
     if (newTokenProxy == address(0)) revert DeploymentFailed();
 
+    // bytes32 itsTokenId = s_its.deployTokenManager(
+    //   S_SALT_ITS_TOKEN,
+    //   '',
+    //   ITokenManagerType.TokenManagerType.LOCK_UNLOCK,
+    //   _itsParams,
+    //   msg.value
+    // );
     emit NativeTokenDeployed(newTokenProxy);
-    s_nativeTokens['ethereum'] = newTokenProxy;
+    s_nativeTokens[s_homeChain] = newTokenProxy;
   }
 
+  //FOR REMOTE
   function connectTokenToITS(
     string calldata _destChain,
     bytes calldata _itsTokenParams
   ) external payable {
-    if (s_nativeTokens['ethereum'] == address(0)) revert InvalidToken();
+    if (s_nativeTokens[s_homeChain] == address(0)) revert InvalidToken();
     if (
       keccak256(abi.encode(_destChain)) != keccak256(abi.encode('')) &&
       s_semiNativeTokens[_destChain] == address(0)

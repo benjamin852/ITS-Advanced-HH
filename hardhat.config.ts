@@ -57,7 +57,8 @@ task('deployHomeCelo', 'deploy factory on home chain, (celo for testing)')
       chains[0].gasService,
       chains[0].gateway,
       accessControlProxy.target,
-      taskArgs.deployer
+      taskArgs.deployer,
+      'celo'
     ])
 
 
