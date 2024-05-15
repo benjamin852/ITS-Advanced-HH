@@ -5,71 +5,6 @@
       "address": "0x25Af58E74454CE13E4AE40961BEAAe0116C965d5",
       "txHash": "0xa3936a5c362e0f54b81af642e4b1511fa89da2f60cbc25be8528a8431925e3f1",
       "kind": "transparent"
-    },
-    {
-      "address": "0x9260ADd57AbEaF5CA00b90bAb998Cc039A9bB6ba",
-      "txHash": "0x4f451c56964bcf9aa08134ddd382a9a0405c9296b8690f4799d25e1c5a524a37",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xF08626a04DA14994339c647d024CE4A689646301",
-      "txHash": "0x443034346b0e4c57b8bca74924b07ee4ce0786d5f6223090fabe5f746ce7b874",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xb217333C010d129C9d9cdd4F7F951D82c51a53E7",
-      "txHash": "0xeb9b7f4c8d42de051d98b2f1e24415ee5ce23e8ca949439c5ff4aa4c80510c41",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x9649ef9596927df1d117073b0FEF2C2D2d6786Ba",
-      "txHash": "0x40005077257fa9158b0abfb2e8fffa3e39224f9c16b64b6ba893c1c26cee4651",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xdD288F23AA56F9023eC32edEeED8B1440b4f769a",
-      "txHash": "0xc53dbd9de95a27acaa9648538a4f162b5520a12b92223ea1867f8cadc2078061",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xb2F52FEF1842f5B80417522832e0606239C7Cd45",
-      "txHash": "0xba910851251d24a25addca393aafaf3ec099caf0d79f20688a2a18f82223a91d",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xD8e43Ac35A833015937A9d7ccC8656864A673672",
-      "txHash": "0x8ed2a50d8ca38195701803dc6dd475b717796e7fe06f95dc5a1c5804f2e73ead",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x46545AF87F968336Dd1DA9d3C27162a3C9C73566",
-      "txHash": "0x9e1827314e9ba06dd1ef3efb785a55186efca5f4a67a0c1b67e42eb7024e1872",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x5F328D03b752a6aEBfcD3230860232B19527C293",
-      "txHash": "0x19adcd7abae1a0d26e678bc469ed15b7a9123ccaf77c766ff73eccb60a153e5e",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x569f4D4051CCfF5bd57a401Ba91D5ddD834A5420",
-      "txHash": "0x0c323d07b446fc1919707072966c2826ca4387ffd3a94ba27b99de97d7bf6679",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xd2b2511175bca12e0182A4a81885f90d9E67B47e",
-      "txHash": "0xf28e671e9baec324d45d0e5d06abf4b3eeb1c0b20125afc33d7da4fc6019c3c9",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x9B9c52d580212179f5EC0d4862E85Ae67259539f",
-      "txHash": "0xc68b76d381de8de7fa4b81bb4b8f71370fc0e3dde005ae659912183aca46f9ad",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x2D3a78B3147Fcbd5D2e18a8D4ae86C70641aA861",
-      "txHash": "0x824228e1522ecee879c78c7b28940a5aee90bc1649907fa0d47d46bc37d2bb36",
-      "kind": "transparent"
     }
   ],
   "impls": {
@@ -113,23 +48,23 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(RoleData)747_storage)": {
+          "t_mapping(t_bytes32,t_struct(RoleData)804_storage)": {
             "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
             "numberOfBytes": "32"
           },
-          "t_struct(AccessControlStorage)757_storage": {
+          "t_struct(AccessControlStorage)814_storage": {
             "label": "struct AccessControlUpgradeable.AccessControlStorage",
             "members": [
               {
                 "label": "_roles",
-                "type": "t_mapping(t_bytes32,t_struct(RoleData)747_storage)",
+                "type": "t_mapping(t_bytes32,t_struct(RoleData)804_storage)",
                 "offset": 0,
                 "slot": "0"
               }
             ],
             "numberOfBytes": "32"
           },
-          "t_struct(InitializableStorage)817_storage": {
+          "t_struct(InitializableStorage)874_storage": {
             "label": "struct Initializable.InitializableStorage",
             "members": [
               {
@@ -147,7 +82,7 @@
             ],
             "numberOfBytes": "32"
           },
-          "t_struct(RoleData)747_storage": {
+          "t_struct(RoleData)804_storage": {
             "label": "struct AccessControlUpgradeable.RoleData",
             "members": [
               {
@@ -175,188 +110,12 @@
             {
               "contract": "AccessControlUpgradeable",
               "label": "_roles",
-              "type": "t_mapping(t_bytes32,t_struct(RoleData)747_storage)",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)804_storage)",
               "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61",
               "offset": 0,
               "slot": "0"
             }
           ],
-          "erc7201:openzeppelin.storage.Initializable": [
-            {
-              "contract": "Initializable",
-              "label": "_initialized",
-              "type": "t_uint64",
-              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
-              "offset": 0,
-              "slot": "0"
-            },
-            {
-              "contract": "Initializable",
-              "label": "_initializing",
-              "type": "t_bool",
-              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
-              "offset": 8,
-              "slot": "0"
-            }
-          ]
-        }
-      }
-    },
-    "99c74b7b44f1010e31e8d58b982e549d31b65391772afe7782ac1c802c65bf14": {
-      "address": "0xB28494C68c38D83F91b973200CE108020810c2Dc",
-      "txHash": "0x31d0efbb2404b11f4484ebf616611b71df42d2962d885dba0716851b519ca0fc",
-      "layout": {
-        "solcVersion": "0.8.20",
-        "storage": [
-          {
-            "label": "s_its",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_contract(IInterchainTokenService)2084",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:36"
-          },
-          {
-            "label": "s_accessControl",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_contract(AccessControl)7940",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:37"
-          },
-          {
-            "label": "s_gasService",
-            "offset": 0,
-            "slot": "2",
-            "type": "t_contract(IAxelarGasService)651",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:38"
-          },
-          {
-            "label": "s_gateway",
-            "offset": 0,
-            "slot": "3",
-            "type": "t_contract(IAxelarGateway)987",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:39"
-          },
-          {
-            "label": "s_deployer",
-            "offset": 0,
-            "slot": "4",
-            "type": "t_contract(Deployer)9320",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:40"
-          },
-          {
-            "label": "S_SALT_PROXY",
-            "offset": 0,
-            "slot": "5",
-            "type": "t_bytes32",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:41"
-          },
-          {
-            "label": "S_SALT_IMPL",
-            "offset": 0,
-            "slot": "6",
-            "type": "t_bytes32",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:42"
-          },
-          {
-            "label": "S_SALT_ITS_TOKEN",
-            "offset": 0,
-            "slot": "7",
-            "type": "t_bytes32",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:43"
-          },
-          {
-            "label": "s_nativeTokens",
-            "offset": 0,
-            "slot": "8",
-            "type": "t_mapping(t_string_memory_ptr,t_address)",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:45"
-          },
-          {
-            "label": "s_semiNativeTokens",
-            "offset": 0,
-            "slot": "9",
-            "type": "t_mapping(t_string_memory_ptr,t_address)",
-            "contract": "TokenFactory",
-            "src": "contracts/TokenFactory.sol:46"
-          }
-        ],
-        "types": {
-          "t_bool": {
-            "label": "bool",
-            "numberOfBytes": "1"
-          },
-          "t_struct(InitializableStorage)817_storage": {
-            "label": "struct Initializable.InitializableStorage",
-            "members": [
-              {
-                "label": "_initialized",
-                "type": "t_uint64",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "_initializing",
-                "type": "t_bool",
-                "offset": 8,
-                "slot": "0"
-              }
-            ],
-            "numberOfBytes": "32"
-          },
-          "t_uint64": {
-            "label": "uint64",
-            "numberOfBytes": "8"
-          },
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_bytes32": {
-            "label": "bytes32",
-            "numberOfBytes": "32"
-          },
-          "t_contract(AccessControl)7940": {
-            "label": "contract AccessControl",
-            "numberOfBytes": "20"
-          },
-          "t_contract(Deployer)9320": {
-            "label": "contract Deployer",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IAxelarGasService)651": {
-            "label": "contract IAxelarGasService",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IAxelarGateway)987": {
-            "label": "contract IAxelarGateway",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IInterchainTokenService)2084": {
-            "label": "contract IInterchainTokenService",
-            "numberOfBytes": "20"
-          },
-          "t_mapping(t_string_memory_ptr,t_address)": {
-            "label": "mapping(string => address)",
-            "numberOfBytes": "32"
-          },
-          "t_string_memory_ptr": {
-            "label": "string",
-            "numberOfBytes": "32"
-          },
-          "t_string_storage": {
-            "label": "string"
-          }
-        },
-        "namespaces": {
           "erc7201:openzeppelin.storage.Initializable": [
             {
               "contract": "Initializable",

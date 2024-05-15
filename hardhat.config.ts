@@ -36,7 +36,8 @@ task('deployAvalanche', 'deploy deployer on remote chain (Avalanche for testing'
   const deployer = await hre.upgrades.deployProxy(Deployer, [
     chains[1].its,
     accessControlProxy.target,
-    chains[1].gateway
+    chains[1].gateway,
+    { initalizer: 'initialize', unsafeAllow: ["constructor", "state-variable-immutable"] }
   ])
   console.log(`Avalanche deployer contract address: ${deployer.target}`)
 
@@ -58,8 +59,8 @@ task('deployHomeCelo', 'deploy factory on home chain, (celo for testing)')
       chains[0].gateway,
       accessControlProxy.target,
       taskArgs.deployer,
-      'celo'
-    ])
+      'celo',
+    ], { initializer: 'initialize', unsafeAllow: ["constructor", "state-variable-immutable"] })
 
 
 
@@ -93,6 +94,11 @@ const config: HardhatUserConfig = {
       url: chains[1].rpc,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
       chainId: chains[1].chainId,
+    },
+    sepolia: {
+      url: chains[2].rpc,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+      chainId: chains[2].chainId,
     },
   },
 

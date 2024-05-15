@@ -10,7 +10,7 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
 import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import '@axelar-network/interchain-token-service/contracts/interfaces/ITokenManagerType.sol';
-import './helpers/Create3.sol';
+import '@axelar-network/axelar-gmp-sdk-solidity/contracts/deploy/Create3.sol';
 import './NativeTokenV1.sol';
 import './MultichainToken.sol';
 import './AccessControl.sol';
@@ -57,8 +57,8 @@ contract TokenFactory is Create3, Initializable {
   /*************\
         EVENTS
     /*************/
-  event NativeTokenDeployed(address tokenAddress);
-  event MultichainTokenDeployed(address tokenAddress);
+  event NativeTokenDeployed(address tokenAddress, string tokenId);
+  event MultichainTokenDeployed(address tokenAddress, string tokenId);
 
   /*************\
      INITIALIZATION
@@ -98,7 +98,6 @@ contract TokenFactory is Create3, Initializable {
     return abi.encode(address(this).toBytes(), computedTokenAddr);
   }
 
-  //exec() will deploy create3 token
   //crosschain semi native deployment (does not wire up to its)
   function deployRemoteSemiNativeToken(
     string calldata _destChain
@@ -144,8 +143,7 @@ contract TokenFactory is Create3, Initializable {
   //deploy native token on eth
   function deployHomeNative(
     uint256 _burnRate,
-    uint256 _txFeeRate /*isAdmin*/,
-    bytes calldata _itsParams
+    uint256 _txFeeRate /*isAdmin*/
   ) external payable returns (address newTokenProxy) {
     if (s_nativeTokens[s_homeChain] != address(0))
       revert TokenAlreadyDeployed();
@@ -170,15 +168,7 @@ contract TokenFactory is Create3, Initializable {
     // Deploy proxy
     newTokenProxy = _create3(proxyCreationCode, S_SALT_PROXY);
     if (newTokenProxy == address(0)) revert DeploymentFailed();
-
-    // bytes32 itsTokenId = s_its.deployTokenManager(
-    //   S_SALT_ITS_TOKEN,
-    //   '',
-    //   ITokenManagerType.TokenManagerType.LOCK_UNLOCK,
-    //   _itsParams,
-    //   msg.value
-    // );
-    emit NativeTokenDeployed(newTokenProxy);
+    // emit NativeTokenDeployed(newTokenProxy, newTokenProxy); //TODO use this event in execute()
     s_nativeTokens[s_homeChain] = newTokenProxy;
   }
 
@@ -192,7 +182,7 @@ contract TokenFactory is Create3, Initializable {
       keccak256(abi.encode(_destChain)) != keccak256(abi.encode('')) &&
       s_semiNativeTokens[_destChain] == address(0)
     ) revert InvalidToken();
-    s_its.deployTokenManager(
+    s_its.deployTokenManager{ value: msg.value }(
       S_SALT_ITS_TOKEN,
       _destChain,
       ITokenManagerType.TokenManagerType.MINT_BURN,
@@ -217,7 +207,6 @@ contract TokenFactory is Create3, Initializable {
       )
     ) revert NotApprovedByGateway();
     address liveTokenAddress = abi.decode(_payload, (address));
-    //Avalanche
     s_semiNativeTokens[_sourceChain] = liveTokenAddress;
   }
 

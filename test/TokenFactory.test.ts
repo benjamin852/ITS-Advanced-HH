@@ -70,9 +70,9 @@ describe('TokenFactory', () => {
         );
     });
 
-    // afterEach(async () => {
-    //     await relay();
-    // });
+    afterEach(async () => {
+        await relay();
+    });
     describe('initialize', () => {
         it('should set ITS address', async () => {
             expect(polygon.interchainTokenService.address).to.equal(

@@ -9,7 +9,8 @@ import '@axelar-network/interchain-token-service/contracts/interfaces/IInterchai
 
 import './AccessControl.sol';
 
-import './helpers/Create3.sol';
+import '@axelar-network/axelar-gmp-sdk-solidity/contracts/deploy/Create3.sol';
+
 
 contract Deployer is Initializable, Create3 {
   /*************\
