@@ -6,13 +6,15 @@ import '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGate
 import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
 import '@axelar-network/interchain-token-service/contracts/interfaces/ITokenManagerType.sol';
 import '@axelar-network/interchain-token-service/contracts/interfaces/IInterchainTokenService.sol';
+import { AddressBytes } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressBytes.sol';
 
 import './AccessControl.sol';
 
 import '@axelar-network/axelar-gmp-sdk-solidity/contracts/deploy/Create3.sol';
 
-
 contract Deployer is Initializable, Create3 {
+  using AddressBytes for address;
+
   /*************\
       ERRORS
   /*************/
@@ -88,9 +90,13 @@ contract Deployer is Initializable, Create3 {
       semiNativeSelector
     );
 
-    address newToken = _create3(creationCodeProxy, S_SALT_PROXY);
-    if (newToken == address(0)) revert DeploymentFailed();
-    s_gateway.callContract(_sourceChain, _sourceAddress, abi.encode(newToken));
+    address newTokenProxy = _create3(creationCodeProxy, S_SALT_PROXY);
+    if (newTokenProxy == address(0)) revert DeploymentFailed();
+
+    //circumvent stack too deep
+    string memory chain = _sourceChain;
+
+    s_gateway.callContract(chain, _sourceAddress, abi.encode(newTokenProxy));
   }
 
   function _getEncodedCreationCodeSemiNative(

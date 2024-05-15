@@ -92,11 +92,11 @@ contract TokenFactory is Create3, Initializable {
        EXTERNAL FUNCTIONALITY
     \***************************/
 
-  //param for deployTokenManager()
-  function getItsDeploymentParams() external view returns (bytes memory) {
-    address computedTokenAddr = getExpectedAddress(S_SALT_PROXY);
-    return abi.encode(address(this).toBytes(), computedTokenAddr);
-  }
+  // //param for deployTokenManager()
+  // function getItsDeploymentParams() external view returns (bytes memory) {
+  //   address computedTokenAddr = getExpectedAddress(S_SALT_PROXY);
+  //   return abi.encode(address(this).toBytes(), computedTokenAddr);
+  // }
 
   //crosschain semi native deployment (does not wire up to its)
   function deployRemoteSemiNativeToken(
@@ -140,10 +140,10 @@ contract TokenFactory is Create3, Initializable {
     );
   }
 
-  //deploy native token on eth
+  // await contract.deployHomeNative(10000, 20000, {gasLimit: "10000000"})
   function deployHomeNative(
     uint256 _burnRate,
-    uint256 _txFeeRate /*isAdmin*/
+    uint256 _txFeeRate
   ) external payable returns (address newTokenProxy) {
     if (s_nativeTokens[s_homeChain] != address(0))
       revert TokenAlreadyDeployed();
@@ -168,25 +168,14 @@ contract TokenFactory is Create3, Initializable {
     // Deploy proxy
     newTokenProxy = _create3(proxyCreationCode, S_SALT_PROXY);
     if (newTokenProxy == address(0)) revert DeploymentFailed();
-    // emit NativeTokenDeployed(newTokenProxy, newTokenProxy); //TODO use this event in execute()
     s_nativeTokens[s_homeChain] = newTokenProxy;
-  }
 
-  //FOR REMOTE
-  function connectTokenToITS(
-    string calldata _destChain,
-    bytes calldata _itsTokenParams
-  ) external payable {
-    if (s_nativeTokens[s_homeChain] == address(0)) revert InvalidToken();
-    if (
-      keccak256(abi.encode(_destChain)) != keccak256(abi.encode('')) &&
-      s_semiNativeTokens[_destChain] == address(0)
-    ) revert InvalidToken();
-    s_its.deployTokenManager{ value: msg.value }(
+    // Deploy ITS
+    s_its.deployTokenManager(
       S_SALT_ITS_TOKEN,
-      _destChain,
+      '',
       ITokenManagerType.TokenManagerType.MINT_BURN,
-      _itsTokenParams,
+      abi.encode(address(this).toBytes(), newTokenProxy),
       msg.value
     );
   }
@@ -208,6 +197,14 @@ contract TokenFactory is Create3, Initializable {
     ) revert NotApprovedByGateway();
     address liveTokenAddress = abi.decode(_payload, (address));
     s_semiNativeTokens[_sourceChain] = liveTokenAddress;
+
+    s_its.deployTokenManager(
+      S_SALT_ITS_TOKEN,
+      _sourceChain,
+      ITokenManagerType.TokenManagerType.MINT_BURN,
+      abi.encode(address(this).toBytes(), liveTokenAddress),
+      1000000000
+    );
   }
 
   function getExpectedAddress(bytes32 _salt) public view returns (address) {

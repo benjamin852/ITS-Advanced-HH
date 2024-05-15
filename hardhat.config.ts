@@ -24,7 +24,7 @@ task(
     }
   }
 );
-task('deployAvalanche', 'deploy deployer on remote chain (Avalanche for testing').setAction(async (taskArgs, hre) => {
+task('deployMoonbase', 'deploy deployer on remote chain (Moonbase for testing').setAction(async (taskArgs, hre) => {
   const connectedWallet = getWallet(chains[1].rpc, hre)
   const AccessControl = await hre.ethers.getContractFactory('AccessControl');
   const Deployer = await hre.ethers.getContractFactory('Deployer');
@@ -37,9 +37,9 @@ task('deployAvalanche', 'deploy deployer on remote chain (Avalanche for testing'
     chains[1].its,
     accessControlProxy.target,
     chains[1].gateway,
-    { initalizer: 'initialize', unsafeAllow: ["constructor", "state-variable-immutable"] }
-  ])
-  console.log(`Avalanche deployer contract address: ${deployer.target}`)
+  ], { initializer: 'initialize', unsafeAllow: ["constructor", "state-variable-immutable"] }
+  )
+  console.log(`Moonbase deployer contract address: ${deployer.target}`)
 
 })
 task('deployHomeCelo', 'deploy factory on home chain, (celo for testing)')
@@ -59,7 +59,7 @@ task('deployHomeCelo', 'deploy factory on home chain, (celo for testing)')
       chains[0].gateway,
       accessControlProxy.target,
       taskArgs.deployer,
-      'celo',
+      'celo', //homeChain
     ], { initializer: 'initialize', unsafeAllow: ["constructor", "state-variable-immutable"] })
 
 
@@ -90,7 +90,7 @@ const config: HardhatUserConfig = {
       accounts: [`0x${process.env.PRIVATE_KEY}`],
       chainId: chains[0].chainId,
     },
-    avalanche: {
+    moonbase: {
       url: chains[1].rpc,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
       chainId: chains[1].chainId,

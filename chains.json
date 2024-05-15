@@ -12,15 +12,15 @@
     "tokenSymbol": "CELO"
   },
   {
-    "name": "Avalanche",
-    "chainId": 43113,
-    "rpc": "https://avalanche-fuji-c-chain-rpc.publicnode.com",
+    "name": "Moonbase",
+    "chainId": 1287,
+    "rpc": "https://moonbase-alpha.public.blastapi.io",
     "aUSDC": "0x57F1c63497AEe0bE305B8852b354CEc793da43bB",
-    "gateway": "0xC249632c2D40b9001FE907806902f63038B737Ab",
+    "gateway": "0x5769D84DD62a6fD969856c75c7D321b84d455929",
     "gasService": "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6",
     "its": "0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C",
-    "tokenName": "AVAX",
-    "tokenSymbol": "AVAX"
+    "tokenName": "DEV",
+    "tokenSymbol": "DEV"
   },
   {
     "name": "Ethereum",
