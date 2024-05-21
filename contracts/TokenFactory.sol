@@ -92,12 +92,6 @@ contract TokenFactory is Create3, Initializable {
        EXTERNAL FUNCTIONALITY
     \***************************/
 
-  // //param for deployTokenManager()
-  // function getItsDeploymentParams() external view returns (bytes memory) {
-  //   address computedTokenAddr = getExpectedAddress(S_SALT_PROXY);
-  //   return abi.encode(address(this).toBytes(), computedTokenAddr);
-  // }
-
   //crosschain semi native deployment (does not wire up to its)
   function deployRemoteSemiNativeToken(
     string calldata _destChain
@@ -175,7 +169,11 @@ contract TokenFactory is Create3, Initializable {
       S_SALT_ITS_TOKEN,
       '',
       ITokenManagerType.TokenManagerType.MINT_BURN,
-      abi.encode(address(this).toBytes(), newTokenProxy),
+      abi.encode(
+        //my address is operator
+        0xc5DcAC3e02f878FE995BF71b1Ef05153b71da8BE.toBytes(),
+        newTokenProxy
+      ),
       msg.value
     );
   }
@@ -202,8 +200,12 @@ contract TokenFactory is Create3, Initializable {
       S_SALT_ITS_TOKEN,
       _sourceChain,
       ITokenManagerType.TokenManagerType.MINT_BURN,
-      abi.encode(address(this).toBytes(), liveTokenAddress),
-      1000000000
+      // abi.encode(address(this).toBytes(), liveTokenAddress),
+      abi.encode(
+        0xc5DcAC3e02f878FE995BF71b1Ef05153b71da8BE.toBytes(),
+        liveTokenAddress
+      ),
+      0
     );
   }
 

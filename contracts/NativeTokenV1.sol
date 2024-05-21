@@ -10,6 +10,7 @@ import '@axelar-network/interchain-token-service/contracts/interfaces/IInterchai
 import './AccessControl.sol';
 import './MultichainToken.sol';
 
+//TODO Inherit from InterchainTokenStandard
 contract NativeTokenV1 is
   Initializable,
   ERC20Upgradeable,
@@ -109,19 +110,24 @@ contract NativeTokenV1 is
     _mint(_to, _amount);
   }
 
+  function burn(address _from, uint256 _amount) public {
+    _burn(_from, _amount);
+  }
+
   function claimRewards() external whenNotPaused {
     uint256 reward = _calculateReward(msg.sender);
     s_rewardPool -= reward;
     _mint(msg.sender, reward);
     emit RewardClaimed(msg.sender, reward);
   }
+
   /***************************\
        INTERNAL FUNCTIONALITY
     \***************************/
 
-  function _calculateReward(address account) internal view returns (uint256) {
+  function _calculateReward(address _account) internal view returns (uint256) {
     if (totalSupply() == 0) return 0;
-    return (s_rewardPool * balanceOf(account)) / totalSupply();
+    return (s_rewardPool * balanceOf(_account)) / totalSupply();
   }
 
   function _update(
@@ -133,15 +139,16 @@ contract NativeTokenV1 is
     override(ERC20Upgradeable, ERC20PausableUpgradeable)
     whenNotPaused
   {
-    uint256 burnAmount = (_value * s_burnRate) / 10000;
-    uint256 fee = (_value * s_txFeeRate) / 10000;
-    uint256 amountToSend = _value - fee - burnAmount;
+    // uint256 burnAmount = (_value * s_burnRate) / 10000;
+    // uint256 fee = (_value * s_txFeeRate) / 10000;
 
-    if (burnAmount > 0) _burn(_from, burnAmount);
+    // uint256 amountToSend = _value - fee - burnAmount;
 
-    if (amountToSend + burnAmount + fee != _value) revert InvalidSendAmount();
-    super._update(_from, _to, _value);
-    s_rewardPool += fee;
-    emit RewardAdded(fee);
+    // if (burnAmount > 0) _burn(_from, burnAmount);
+
+    // if (amountToSend + burnAmount + fee != _value) revert InvalidSendAmount();
+    ERC20Upgradeable._update(_from, _to, _value);
+    // s_rewardPool += fee;
+    // emit RewardAdded(fee);
   }
 }

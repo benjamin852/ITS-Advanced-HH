@@ -80,6 +80,141 @@
       "address": "0xD955a814d65000d8C13A10E4f19949EECe53363a",
       "txHash": "0x4e5c460f6eb488683f2dc81e0c9cdf9f6036c88c10967670f35c0864ea403259",
       "kind": "transparent"
+    },
+    {
+      "address": "0xB6DE251e07D116EeDaF3Bf68E805C72DA23B62cc",
+      "txHash": "0xf50295a41a11677a20648840b0bbc6cde59ca794a0a28289e4b7f10992c2714f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xee0eDD6956Db9101017821351ce48CAA69A6698a",
+      "txHash": "0xe71cb5222c015454491c55dbdb032d166216b0470a4bc58a315669401b4bcfa2",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc46915271af61779eD3C4B1F7471E2F14E30f846",
+      "txHash": "0xb42be8b025920c7a1bd6143124194cc5e1e19b854fefca8d84abea613e4894db",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC6ece11e39DA485bE3a5c1665588Ce788ca657be",
+      "txHash": "0x0fb75f22c01b2aa841510adc64b88eb23aee867669ac2e6715a918cbebe06b67",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5B80Df4c96650695b413e92f93DcEae6802Fc68E",
+      "txHash": "0xe2eec360f6dbe8cab13ebac1dcce9ff6af8b48cf774b2ec1dcc1088a9095a588",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x623c44729fBae2A59A6d2e0339E6d201947bEF5e",
+      "txHash": "0xa363a91b041563556a390b9142eea35aad1a7dcf2a3e0f2e8953f602d1558f7a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe0B676318f2FbFeF9efb585A359D1e41a7B55120",
+      "txHash": "0x0d226fb8555a49d2f292ac8a980e2eb9bd74236b2b5c4f96934c47f464929f3f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x11f14B8F3250f234fff56ecC669Acf4dEaed9d34",
+      "txHash": "0x8142e1058ff6871aaa4e763ac1ed991a839777711925ee579d794db2394fd02a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x011b0Dc83f0De6049d116C858524e8af0af0074E",
+      "txHash": "0x5652dfb1dcc341e7149dac573b620e75517fac644bc237d1efb6a3e1e5f1d802",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x92F4191dd8C40e22A58371F26380E800B2AcCE8c",
+      "txHash": "0xe254e5de1b452eeed74d0c1bf7646f9fccf45f8ce11de4d87eae0555c353720d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC28841187779714a3f06759AD554DCEB89276B14",
+      "txHash": "0xd9efcf221946a65f1cf3063cb8a230270261bbdff7d14f83c97da1595a41dcc9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCA9eBaA6c92fB74f58c0b7a045551C718eF81cAe",
+      "txHash": "0x6eb829aefe6b4402cccc986c8d789ce2389a32323d0f779f1e536a08cd0db28c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xcE44B888FA8845E2c89eE0FDB54F698c26Ba2ac5",
+      "txHash": "0xe149151bfaa492fa6f5db2fc72f5cba056cd7bddf3fe6cf25b105fce69f17795",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xcAeB04f3f252b948465b95Fc71Abc5419a69F438",
+      "txHash": "0xa6f1d44d851c241c7670be2d40e8ea16e7dcb8695c0bb0ff8a59339bbcdf71f3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9Dc3eFb70eFd6A0156718f389d2ae2Ac31c0a13c",
+      "txHash": "0xc8e802ae426bf646f0861ac228b51f739d5f6044924fa30dd7fe016bc4d2a178",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x543aa986E0B32b846Ef2171004043704C125761E",
+      "txHash": "0x709f0333c3d2d3dc7fae0ce621bd14f05b733b16ced4505e590ed1ab57b4dd3c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6226C88e4d60a2D1BCB4d19cF8C64D4D55e92E44",
+      "txHash": "0xb4a2b2a24fd3fec020a7ba96bf0ed3b945739226a8491462eca609cae73106b5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x03A0B4ae8929dA7d0e12803738222d01B0837B2c",
+      "txHash": "0x6cdecbd051afd1b62e42a719afd6b837105c786612ec4fbf93bffff07243bf31",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x7DA004aCde5eE2d5Cc9F444B56D98d9006e5988c",
+      "txHash": "0x4ae46aca51aa9e6ab6d01b10e8740e851efa64e8a8f23516f57221948b17b1db",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6a5e02655cc02c280cAc1D63664c84DAa41A9744",
+      "txHash": "0x069b74400eb2fa3b1abddaa252d36a5c1b40d4602c6f70cbf36c3ce36e42ab8e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0cA77C96398736d61367adAfF470A3cB579CE09e",
+      "txHash": "0x53d0233edd364f4c2bb20a0dff40f220aad1e1fe04ad16efd3a442dbcdcd5b5d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe48e38784CD76E5990DFaD15f7742A3874607Fde",
+      "txHash": "0xf61301a6535c80d226ee68d39b913a47a4294a999c493d6b212cf110da852955",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x17cCe28ebc5300dB0e8129962820AA0ce9e27965",
+      "txHash": "0x98289d043de923d844790ac8c68fce2562d2b5d2bd49894c5eafcb390e9323c5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x87087BFd271ac5f5691CedD5afc496867991E0B8",
+      "txHash": "0xbcfa5efc73b07bc13518f967f4691d6427e634e2b86238550f836a3db63a7196",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC69dFD05f29FdD60C38403BBF82ad9bd48B49010",
+      "txHash": "0xedfeea401b5553caa7ea229b1a24271e3880459de605d9795e80047f3c432dd3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x82210AE21200638C9308B73b1295c68B55FB1604",
+      "txHash": "0xead18b3eef6d8b38eec300778fb3a2456d727f2047e2e12f9eafb9bbbe1ef401",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x74C15051C16f0eB70F28e3b55ad322705dE5C545",
+      "txHash": "0x4d73716f3348a615d7550afbf4e72e9efddd81d2349dcdb4c4cdfeefdb1b114d",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -898,6 +1033,393 @@
           "t_uint64": {
             "label": "uint64",
             "numberOfBytes": "8"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(AccessControl)8144": {
+            "label": "contract AccessControl",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)1154": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInterchainTokenService)2288": {
+            "label": "contract IInterchainTokenService",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "929a68d71cdb909e6526987482254f35e16782eb0614fd5437a288323011c7b4": {
+      "address": "0x344160579542BFbE66E8dB9CbD74b365e6922A4d",
+      "txHash": "0xe710df527e4165d7aed95ced5dbf9900e082013ab63e15bd580525f4479bd7cd",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "s_its",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IInterchainTokenService)2288",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:28"
+          },
+          {
+            "label": "s_accessControl",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AccessControl)8144",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:29"
+          },
+          {
+            "label": "s_gateway",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IAxelarGateway)1154",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:30"
+          },
+          {
+            "label": "S_SALT_PROXY",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:31"
+          },
+          {
+            "label": "S_SALT_IMPL",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:32"
+          },
+          {
+            "label": "S_SALT_ITS_TOKEN",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:33"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)874_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(AccessControl)8144": {
+            "label": "contract AccessControl",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)1154": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInterchainTokenService)2288": {
+            "label": "contract IInterchainTokenService",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "46e9e4c406b791a47cf2da664503883e94944de6e7da37711ab317dd840a74b2": {
+      "address": "0x54fFF36A6E2212982a66a96FCdfEdC6a78564eaF",
+      "txHash": "0x4808c45ab92693f12d4ad3773d2ef7cbd20a7a10e088ff7ca718ba60aa103987",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "s_its",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IInterchainTokenService)2288",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:28"
+          },
+          {
+            "label": "s_accessControl",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AccessControl)8144",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:29"
+          },
+          {
+            "label": "s_gateway",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IAxelarGateway)1154",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:30"
+          },
+          {
+            "label": "S_SALT_PROXY",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:31"
+          },
+          {
+            "label": "S_SALT_IMPL",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:32"
+          },
+          {
+            "label": "S_SALT_ITS_TOKEN",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:33"
+          },
+          {
+            "label": "testMe",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_address",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:35"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)874_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(AccessControl)8144": {
+            "label": "contract AccessControl",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)1154": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInterchainTokenService)2288": {
+            "label": "contract IInterchainTokenService",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "bef8e65f20003e184a7bbb5eaeeead2f66754b478b6da57cb62490b42033d8c0": {
+      "address": "0x88f423c755137931c3b3C8CB8e7ADc1f1773Daee",
+      "txHash": "0x191b6dbadf43b2ca0a52ad47ad26afa921a9189b6602de3fa5e2f7e5c4263e54",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "s_its",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IInterchainTokenService)2288",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:28"
+          },
+          {
+            "label": "s_accessControl",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(AccessControl)8144",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:29"
+          },
+          {
+            "label": "s_gateway",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IAxelarGateway)1154",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:30"
+          },
+          {
+            "label": "S_SALT_PROXY",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:31"
+          },
+          {
+            "label": "S_SALT_IMPL",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:32"
+          },
+          {
+            "label": "S_SALT_ITS_TOKEN",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bytes32",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:33"
+          },
+          {
+            "label": "testMe",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_address",
+            "contract": "Deployer",
+            "src": "contracts/Deployer.sol:35"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)874_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
           },
           "t_bytes32": {
             "label": "bytes32",

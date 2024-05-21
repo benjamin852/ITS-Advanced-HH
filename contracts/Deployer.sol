@@ -32,6 +32,8 @@ contract Deployer is Initializable, Create3 {
   bytes32 public S_SALT_IMPL; //1234
   bytes32 public S_SALT_ITS_TOKEN; //12345
 
+  address public testMe;
+
   /*****************\
      INITIALIZATION
   /*****************/
@@ -96,9 +98,11 @@ contract Deployer is Initializable, Create3 {
     //circumvent stack too deep
     string memory chain = _sourceChain;
 
+    testMe = newTokenProxy;
+
     s_gateway.callContract(chain, _sourceAddress, abi.encode(newTokenProxy));
   }
-
+// 0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C
   function _getEncodedCreationCodeSemiNative(
     address _proxyAdmin,
     address _implAddr,
