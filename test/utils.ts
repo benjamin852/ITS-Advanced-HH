@@ -1,4 +1,4 @@
-import { AbiCoder, keccak256, toUtf8Bytes } from 'ethers';
+import { AbiCoder, keccak256, toUtf8Bytes, hexlify, getAddress } from 'ethers';
 
 export function calculateExpectedTokenId(abiCoder: AbiCoder, deployer: string): string {
     const PREFIX_INTERCHAIN_TOKEN_ID: string = keccak256(toUtf8Bytes('its-interchain-token-id'));
@@ -15,5 +15,8 @@ export function calculateExpectedTokenId(abiCoder: AbiCoder, deployer: string): 
 
     return expectedTokenId;
 }
+
+
+
 
 

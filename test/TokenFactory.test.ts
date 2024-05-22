@@ -2,25 +2,29 @@ import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import {
     Contract,
+    ContractFactory,
     Signer,
     Wallet,
     AbiCoder,
     keccak256,
     ZeroAddress,
+    encodeBytes32String,
 } from 'ethers';
 
 import { createNetwork, relay } from '@axelar-network/axelar-local-dev';
+
 import { calculateExpectedTokenId } from './utils';
 describe('TokenFactory', () => {
     let polygon: any;
     let avalanche: any;
-    let TokenFactory: any;
-    let AccessControl: any;
-    let Deployer: any;
+    let TokenFactory: ContractFactory;
+    let AccessControl: ContractFactory;
+    let SemiNativeFactory: ContractFactory;
+    let Deployer: ContractFactory;
     let factoryProxy: Contract;
     let accessControlProxy: Contract;
     let deployerProxy: Contract;
-    let deployer: Signer;
+    let deployerEOA: Signer;
 
     let polygonUserWallet: Wallet;
     let avalancheUserWallet: Wallet;
@@ -31,6 +35,7 @@ describe('TokenFactory', () => {
     const abiCoder = new AbiCoder();
 
     before(async () => {
+        upgrades.silenceWarnings();
         // Initialize a Polygon network
         polygon = await createNetwork({
             name: 'Polygon',
@@ -47,16 +52,33 @@ describe('TokenFactory', () => {
     });
 
     beforeEach(async () => {
+        SemiNativeFactory = await ethers.getContractFactory("MultichainToken");
         AccessControl = await ethers.getContractFactory('AccessControl');
         TokenFactory = await ethers.getContractFactory('TokenFactory');
         Deployer = await ethers.getContractFactory('Deployer');
-        [deployer] = await ethers.getSigners();
+
+        [deployerEOA] = await ethers.getSigners();
         accessControlProxy = await upgrades.deployProxy(
             AccessControl,
-            [await deployer.getAddress()],
+            [await deployerEOA.getAddress()],
             { initializer: 'initialize' }
         );
-        deployerProxy = await upgrades.deployProxy(Deployer, [await deployer.getAddress()], { initializer: 'initialize' })
+        //1. More common for people to use hardhat deploy
+        //2. Proxy we deploy in examples is not realistic
+        //3. Upgrade upgradeable i'd rather use hardhat upgrade func
+        const deployerProxy = await upgrades.deployProxy(
+            Deployer,
+            [
+                polygon.interchainTokenService.address,
+                accessControlProxy.target,
+                polygon.gateway.address,
+            ],
+            {
+                initializer: 'initialize',
+                unsafeAllow: ['constructor', 'state-variable-immutable'],
+            }
+        );
+
         factoryProxy = await upgrades.deployProxy(
             TokenFactory,
             [
@@ -64,9 +86,13 @@ describe('TokenFactory', () => {
                 polygon.gasService.address,
                 polygon.gateway.address,
                 accessControlProxy.target,
-                deployerProxy.target
+                deployerProxy.target,
+                encodeBytes32String('polygon'),
             ],
-            { initializer: 'initialize' }
+            {
+                initializer: 'initialize',
+                unsafeAllow: ['constructor', 'state-variable-immutable'],
+            }
         );
     });
 
@@ -94,59 +120,68 @@ describe('TokenFactory', () => {
         });
     });
     describe('deployRemoteSemiNativeToken', () => {
+        beforeEach(async () => {
+            await factoryProxy.deployHomeNative(burnRate, txFeeRate);
+        });
         describe('src', () => {
-            it('should successfully trigger multichain tx', async () => {
 
+            it('should successfully deploy remote semi native token', async () => {
                 // const saltItsToken = await factoryProxy.S_SALT_ITS_TOKEN();
-                // const saltProxy = await factoryProxy.S_SALT_PROXY();
                 // const expectedId = calculateExpectedTokenId(
                 //     abiCoder,
                 //     await factoryProxy.getAddress()
                 // );
+                // const semiNativeFactoryBytecode = SemiNativeFactory.bytecode;
+                // const abi = SemiNativeFactory.interface
+                // const initializeFunction = abi.getFunction("initialize");
+                // if (!initializeFunction) throw new Error('init func not found')
+                // const initializeSelector: string = initializeFunction.selector;
+
+
                 // const payload = abiCoder.encode(
                 //     ['bytes32', 'bytes32', 'bytes32'],
                 //     [saltItsToken, saltProxy, expectedId]
                 // );
-                // const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
-                // console.log(itsDeploymentParams, 'itsdeploymentparams')
 
-                await factoryProxy.deployRemoteSemiNativeToken('avalanche')
+
+                // await expect(factoryProxy.deployRemoteSemiNativeToken('avalanche'))
+                //     .to.emit(polygon.gateway, 'ContractCall')
+                //     .withArgs(factoryProxy.address,
+                //         avalanche.name,
+                //         deployerProxy.address,
+                //         hashedPayload,
+                //         payload,);
+
+
+                await factoryProxy.deployRemoteSemiNativeToken('avalanche', { value: 1e18.toString() })
             });
+
         });
         describe('dest', () => { });
     });
     describe('deployHomeNative', () => {
+        const SALT_PROXY =
+            '0x000000000000000000000000000000000000000000000000000000000000007B';
         it('Should deploy new token at correct address', async () => {
-            const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
-
-            const types = ['bytes', 'address'];
-            const decoded = abiCoder.decode(types, itsDeploymentParams);
-
-            const expectedAddr = decoded[1];
+            const expectedAddr = await factoryProxy.getExpectedAddress(SALT_PROXY);
             const expectedId = calculateExpectedTokenId(
                 abiCoder,
                 await factoryProxy.getAddress()
             );
-            await expect(
-                factoryProxy.deployHomeNative(itsDeploymentParams, burnRate, txFeeRate)
-            )
+            await expect(factoryProxy.deployHomeNative(burnRate, txFeeRate))
                 .to.emit(factoryProxy, 'NativeTokenDeployed')
                 .withArgs(expectedAddr, expectedId);
         });
         it('Should save token to native tokens mapping', async () => {
-            const itsDeploymentParams = await factoryProxy.getItsDeploymentParams();
-            const types = ['bytes', 'address'];
-            const decoded = abiCoder.decode(types, itsDeploymentParams);
-
-            const expectedAddr = decoded[1];
-            const tokensMappingBefore = await factoryProxy.s_nativeTokens('ethereum');
-            expect(tokensMappingBefore).to.equal(ZeroAddress);
-            await factoryProxy.deployHomeNative(
-                itsDeploymentParams,
-                burnRate,
-                txFeeRate
+            const expectedAddr = await factoryProxy.getExpectedAddress(SALT_PROXY);
+            const tokensMappingBefore = await factoryProxy.s_nativeTokens(
+                encodeBytes32String('polygon')
             );
-            const tokensMappingAfter = await factoryProxy.s_nativeTokens('ethereum');
+            expect(tokensMappingBefore).to.equal(ZeroAddress);
+            await factoryProxy.deployHomeNative(burnRate, txFeeRate);
+            const tokensMappingAfter = await factoryProxy.s_nativeTokens(
+                encodeBytes32String('polygon')
+            );
             expect(tokensMappingAfter).to.equal(expectedAddr);
         });
     });

@@ -2,8 +2,9 @@
 pragma solidity ^0.8.20;
 
 import '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
-import { StringToAddress, AddressToString } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressString.sol';
+import { AddressToString } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressString.sol';
 import { AddressBytes } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressBytes.sol';
+import {StringToBytes32} from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/Bytes32String.sol';
 import '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
 import '@axelar-network/interchain-token-service/contracts/interfaces/IInterchainTokenService.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -19,6 +20,7 @@ import './Deployer.sol';
 contract TokenFactory is Create3, Initializable {
   using AddressToString for address;
   using AddressBytes for address;
+  using StringToBytes32 for string;
 
   /*************\
         ERRORS
@@ -38,27 +40,21 @@ contract TokenFactory is Create3, Initializable {
   IAxelarGasService public s_gasService;
   IAxelarGateway public s_gateway;
   Deployer public s_deployer;
-  bytes32 public S_SALT_PROXY; //123
-  bytes32 public S_SALT_IMPL; //1234
   bytes32 public S_SALT_ITS_TOKEN; //12345
-  string public s_homeChain;
+  bytes32 public s_homeChain;
 
-  mapping(string => address) public s_nativeTokens;
-  mapping(string => address) public s_semiNativeTokens;
-
-  /*************\
-        MODIFIERS
-    /*************/
-  modifier isAdmin() {
-    if (s_accessControl.isAdmin(msg.sender)) revert OnlyAdmin();
-    _;
-  }
+  mapping(bytes32 => address) public s_nativeTokens;
+  mapping(bytes32 => address) public s_semiNativeTokens;
 
   /*************\
         EVENTS
     /*************/
-  event NativeTokenDeployed(address tokenAddress, string tokenId);
-  event MultichainTokenDeployed(address tokenAddress, string tokenId);
+  event NativeTokenDeployed(address token, bytes32 interchainTokenId);
+  event SemiNativeTokenDeployed(
+    address token,
+    string chain,
+    bytes32 interchainTokenId
+  );
 
   /*************\
      INITIALIZATION
@@ -74,7 +70,7 @@ contract TokenFactory is Create3, Initializable {
     IAxelarGateway _gateway,
     AccessControl _accessControl,
     Deployer _deployer,
-    string memory _homeChain
+    bytes32 _homeChain
   ) external initializer {
     s_its = _its;
     s_gasService = _gasService;
@@ -83,8 +79,6 @@ contract TokenFactory is Create3, Initializable {
     s_deployer = _deployer;
     s_homeChain = _homeChain;
 
-    S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
-    S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
     S_SALT_ITS_TOKEN = 0x0000000000000000000000000000000000000000000000000000000000003039; //12345
   }
 
@@ -96,10 +90,9 @@ contract TokenFactory is Create3, Initializable {
   function deployRemoteSemiNativeToken(
     string calldata _destChain
   ) external payable {
-    //Add revert if token already deployed
     if (
-      s_semiNativeTokens[_destChain] != address(0) &&
-      s_nativeTokens[_destChain] != address(0)
+      s_semiNativeTokens[_destChain.toBytes32()] != address(0) &&
+      s_nativeTokens[_destChain.toBytes32()] != address(0)
     ) revert TokenAlreadyDeployed();
 
     bytes32 computedTokenId = keccak256(
@@ -139,13 +132,15 @@ contract TokenFactory is Create3, Initializable {
     uint256 _burnRate,
     uint256 _txFeeRate
   ) external payable returns (address newTokenProxy) {
+    // if (s_accessControl.isAdmin(msg.sender)) revert OnlyAdmin();
+
     if (s_nativeTokens[s_homeChain] != address(0))
       revert TokenAlreadyDeployed();
 
     // Deploy implementation
     address newTokenImpl = _create3(
       type(NativeTokenV1).creationCode,
-      S_SALT_IMPL
+      0x00000000000000000000000000000000000000000000000000000000000004D2 //1234
     );
     if (newTokenImpl == address(0)) revert DeploymentFailed();
 
@@ -160,12 +155,15 @@ contract TokenFactory is Create3, Initializable {
       _txFeeRate
     );
     // Deploy proxy
-    newTokenProxy = _create3(proxyCreationCode, S_SALT_PROXY);
+    newTokenProxy = _create3(
+      proxyCreationCode,
+      0x000000000000000000000000000000000000000000000000000000000000007B
+    ); //123
     if (newTokenProxy == address(0)) revert DeploymentFailed();
     s_nativeTokens[s_homeChain] = newTokenProxy;
 
     // Deploy ITS
-    s_its.deployTokenManager(
+    bytes32 tokenId = s_its.deployTokenManager(
       S_SALT_ITS_TOKEN,
       '',
       ITokenManagerType.TokenManagerType.MINT_BURN,
@@ -176,6 +174,7 @@ contract TokenFactory is Create3, Initializable {
       ),
       msg.value
     );
+    emit NativeTokenDeployed(newTokenProxy, tokenId);
   }
 
   function execute(
@@ -194,19 +193,19 @@ contract TokenFactory is Create3, Initializable {
       )
     ) revert NotApprovedByGateway();
     address liveTokenAddress = abi.decode(_payload, (address));
-    s_semiNativeTokens[_sourceChain] = liveTokenAddress;
+    s_semiNativeTokens[_sourceChain.toBytes32()] = liveTokenAddress;
 
-    s_its.deployTokenManager(
+    bytes32 tokenId = s_its.deployTokenManager(
       S_SALT_ITS_TOKEN,
       _sourceChain,
       ITokenManagerType.TokenManagerType.MINT_BURN,
-      // abi.encode(address(this).toBytes(), liveTokenAddress),
       abi.encode(
         0xc5DcAC3e02f878FE995BF71b1Ef05153b71da8BE.toBytes(),
         liveTokenAddress
       ),
       0
     );
+    emit SemiNativeTokenDeployed(liveTokenAddress, _sourceChain, tokenId);
   }
 
   function getExpectedAddress(bytes32 _salt) public view returns (address) {
