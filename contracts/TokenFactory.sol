@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
 import { AddressToString } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressString.sol';
 import { AddressBytes } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/AddressBytes.sol';
-import {StringToBytes32} from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/Bytes32String.sol';
+import { StringToBytes32 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/Bytes32String.sol';
 import '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
 import '@axelar-network/interchain-token-service/contracts/interfaces/IInterchainTokenService.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -137,10 +137,13 @@ contract TokenFactory is Create3, Initializable {
     if (s_nativeTokens[s_homeChain] != address(0))
       revert TokenAlreadyDeployed();
 
+    bytes32 SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
+    bytes32 SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
+
     // Deploy implementation
     address newTokenImpl = _create3(
       type(NativeTokenV1).creationCode,
-      0x00000000000000000000000000000000000000000000000000000000000004D2 //1234
+      SALT_IMPL
     );
     if (newTokenImpl == address(0)) revert DeploymentFailed();
 
@@ -155,10 +158,7 @@ contract TokenFactory is Create3, Initializable {
       _txFeeRate
     );
     // Deploy proxy
-    newTokenProxy = _create3(
-      proxyCreationCode,
-      0x000000000000000000000000000000000000000000000000000000000000007B
-    ); //123
+    newTokenProxy = _create3(proxyCreationCode, SALT_PROXY);
     if (newTokenProxy == address(0)) revert DeploymentFailed();
     s_nativeTokens[s_homeChain] = newTokenProxy;
 
@@ -166,12 +166,8 @@ contract TokenFactory is Create3, Initializable {
     bytes32 tokenId = s_its.deployTokenManager(
       S_SALT_ITS_TOKEN,
       '',
-      ITokenManagerType.TokenManagerType.MINT_BURN,
-      abi.encode(
-        //my address is operator
-        0xc5DcAC3e02f878FE995BF71b1Ef05153b71da8BE.toBytes(),
-        newTokenProxy
-      ),
+      ITokenManagerType.TokenManagerType.LOCK_UNLOCK,
+      abi.encode(msg.sender.toBytes(), newTokenProxy),
       msg.value
     );
     emit NativeTokenDeployed(newTokenProxy, tokenId);
@@ -199,10 +195,7 @@ contract TokenFactory is Create3, Initializable {
       S_SALT_ITS_TOKEN,
       _sourceChain,
       ITokenManagerType.TokenManagerType.MINT_BURN,
-      abi.encode(
-        0xc5DcAC3e02f878FE995BF71b1Ef05153b71da8BE.toBytes(),
-        liveTokenAddress
-      ),
+      abi.encode(address(this).toBytes(), liveTokenAddress),
       0
     );
     emit SemiNativeTokenDeployed(liveTokenAddress, _sourceChain, tokenId);

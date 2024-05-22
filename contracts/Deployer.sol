@@ -28,11 +28,6 @@ contract Deployer is Initializable, Create3 {
   IInterchainTokenService public s_its;
   AccessControl public s_accessControl;
   IAxelarGateway public s_gateway;
-  bytes32 public S_SALT_PROXY; //123
-  bytes32 public S_SALT_IMPL; //1234
-  bytes32 public S_SALT_ITS_TOKEN; //12345
-
-  address public testMe;
 
   /*****************\
      INITIALIZATION
@@ -46,10 +41,6 @@ contract Deployer is Initializable, Create3 {
     s_its = _its;
     s_accessControl = _accessControl;
     s_gateway = _gateway;
-
-    S_SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
-    S_SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
-    S_SALT_ITS_TOKEN = 0x0000000000000000000000000000000000000000000000000000000000003039; //12345
   }
 
   /***************************\
@@ -78,8 +69,11 @@ contract Deployer is Initializable, Create3 {
       bytes4 semiNativeSelector
     ) = abi.decode(_payload, (bytes32, address, bytes, bytes4));
 
+    bytes32 SALT_PROXY = 0x000000000000000000000000000000000000000000000000000000000000007B; //123
+    bytes32 SALT_IMPL = 0x00000000000000000000000000000000000000000000000000000000000004D2; //1234
+
     // Deploy implementation
-    address newTokenImpl = _create3(semiNativeTokenBytecode, S_SALT_IMPL);
+    address newTokenImpl = _create3(semiNativeTokenBytecode, SALT_IMPL);
     if (newTokenImpl == address(0)) revert DeploymentFailed();
 
     // Deploy ProxyAdmin
@@ -92,17 +86,16 @@ contract Deployer is Initializable, Create3 {
       semiNativeSelector
     );
 
-    address newTokenProxy = _create3(creationCodeProxy, S_SALT_PROXY);
+    address newTokenProxy = _create3(creationCodeProxy, SALT_PROXY);
     if (newTokenProxy == address(0)) revert DeploymentFailed();
 
     //circumvent stack too deep
     string memory chain = _sourceChain;
 
-    testMe = newTokenProxy;
-
     s_gateway.callContract(chain, _sourceAddress, abi.encode(newTokenProxy));
   }
-// 0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C
+
+  // 0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C
   function _getEncodedCreationCodeSemiNative(
     address _proxyAdmin,
     address _implAddr,
